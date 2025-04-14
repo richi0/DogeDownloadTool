@@ -33,7 +33,7 @@ export async function downloadAllPagesGrants<T>(
     }
     result.push(...(firstPageData.result[resultField] as T[]));
     let pageCount = 2;
-    while (pageCount < pages) {
+    while (pageCount <= pages) {
       const pageResponse = await fetch(url + `?page=${pageCount}`);
       const pageData = (await pageResponse.json()) as ListResponseGrant;
       result.push(...(pageData.result[resultField] as T[]));

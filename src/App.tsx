@@ -113,11 +113,11 @@ const App = () => {
     <main className="m-8 text-center">
       <h1 className="text-4xl mb-8">DOGE API Download Tool</h1>
       <p className="mb-4">
-        Downloads the Data from{" "}
+        Downloads the data from the{" "}
         <a className="text-blue-400" href="https://doge.gov/" target="_blank">
           Department of Government Efficiency
         </a>{" "}
-        using the official{" "}
+        using their official{" "}
         <a
           className="text-blue-400"
           href="https://api.doge.gov/docs"
