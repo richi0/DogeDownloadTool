@@ -15,7 +15,7 @@ export async function downloadAllPagesGrants<T>(
 ): Promise<T[] | SimpleError> {
   const result: T[] = [];
   try {
-    const firstPageResponse = await fetch(url);
+    const firstPageResponse = await fetch(`${url}?per_page=500`);
     if (firstPageResponse.status != 200) {
       return {
         message: "Problems fetching data from the api, try again.",
@@ -34,7 +34,7 @@ export async function downloadAllPagesGrants<T>(
     result.push(...(firstPageData.result[resultField] as T[]));
     let pageCount = 2;
     while (pageCount <= pages) {
-      const pageResponse = await fetch(url + `?page=${pageCount}`);
+      const pageResponse = await fetch(url + `?page=${pageCount}&per_page=500`);
       const pageData = (await pageResponse.json()) as ListResponseGrant;
       result.push(...(pageData.result[resultField] as T[]));
       const pagesEvent = new CustomEvent<PagesPayload>("downloadedPages", {
