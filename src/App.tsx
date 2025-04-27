@@ -8,13 +8,13 @@ import {
   downloadGrants,
   downloadLeases,
   PagesPayload,
+  SimpleError,
 } from "./lib/download";
-import { Loader } from "lucide-react";
+import { Github, Linkedin, Loader } from "lucide-react";
+import { Contract, Grant, Lease } from "./lib/typing";
 
 const App = () => {
-  const [isDownloadingGrant, setIsDownloadingGrant] = useState(false);
-  const [isDownloadingContracts, setIsDownloadingContracts] = useState(false);
-  const [isDownloadingLeases, setIsDownloadingLeases] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [pagesToDownload, setPagesToDownload] = useState(0);
   const [pagesDownloaded, setPagesDownloaded] = useState(0);
   const [downloadError, setDownloadError] = useState("");
@@ -38,61 +38,28 @@ const App = () => {
     );
   }, []);
 
-  const generateGrantCSV = async () => {
-    if (isDownloadingGrant) {
+  async function generateCSV<T>(
+    filename: string,
+    downloadFN: () => Promise<SimpleError | T[]>
+  ) {
+    if (isDownloading) {
       return;
     }
     setDownloadError("");
-    setIsDownloadingGrant(true);
+    setIsDownloading(true);
 
-    const grants = await downloadGrants();
-    if (isError(grants)) {
-      setDownloadError(grants.message);
-      setIsDownloadingGrant(false);
+    const result = await downloadFN();
+    if (isError(result)) {
+      setDownloadError(result.message);
+      setIsDownloading(false);
       return;
     }
-    generateDownloadFile(grants, "grants.csv");
-    setIsDownloadingGrant(false);
+    generateDownloadFile(result, filename);
+    setIsDownloading(false);
     setPagesToDownload(0);
-  };
+  }
 
-  const generateContractsCSV = async () => {
-    if (isDownloadingContracts) {
-      return;
-    }
-    setDownloadError("");
-    setIsDownloadingContracts(true);
-
-    const contracts = await downloadContracts();
-    if (isError(contracts)) {
-      setDownloadError(contracts.message);
-      setIsDownloadingContracts(false);
-      return;
-    }
-    generateDownloadFile(contracts, "contracts.csv");
-    setIsDownloadingContracts(false);
-    setPagesToDownload(0);
-  };
-
-  const generateLeasesCSV = async () => {
-    if (isDownloadingLeases) {
-      return;
-    }
-    setDownloadError("");
-    setIsDownloadingLeases(true);
-
-    const leases = await downloadLeases();
-    if (isError(leases)) {
-      setDownloadError(leases.message);
-      setIsDownloadingLeases(false);
-      return;
-    }
-    generateDownloadFile(leases, "leases.csv");
-    setIsDownloadingLeases(false);
-    setPagesToDownload(0);
-  };
-
-  const generateDownloadFile = (data: any, filename: string) => {
+  function generateDownloadFile(data: any, filename: string) {
     stringify(data, { header: true }, (_, output) => {
       const blob = new Blob([output], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
@@ -104,59 +71,85 @@ const App = () => {
       link.click();
       document.body.removeChild(link);
     });
-  };
-
-  const isDownloading =
-    isDownloadingGrant || isDownloadingContracts || isDownloadingLeases;
+  }
 
   return (
-    <main className="m-8 text-center">
-      <h1 className="text-4xl mb-8">DOGE API Download Tool</h1>
-      <p className="mb-4">
-        Downloads the data from the{" "}
-        <a className="text-blue-400" href="https://doge.gov/" target="_blank">
-          Department of Government Efficiency
-        </a>{" "}
-        using their official{" "}
+    <div className="flex flex-col min-h-screen">
+      <main className="m-8 text-center">
+        <h1 className="text-4xl mb-8">DOGE API Download Tool</h1>
+        <p className="mb-8 max-w-md mx-auto">
+          Fetch data directly from the{" "}
+          <a className="text-blue-400" href="https://doge.gov/" target="_blank">
+            Department of Government Efficiency's
+          </a>{" "}
+          official{" "}
+          <a
+            className="text-blue-400"
+            href="https://api.doge.gov/docs"
+            target="_blank"
+          >
+            API
+          </a>
+          . Choose an endpoint and download a CSV file, ready to use in any
+          spreadsheet program.
+        </p>
+        <div className="flex flex-col gap-4 justify-center mb-8">
+          <Button
+            className="w-52 ml-auto mr-auto"
+            onClick={() =>
+              generateCSV<Grant>("grants.csv", () => downloadGrants())
+            }
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader></Loader> : <span>Download Grants</span>}
+          </Button>
+          <Button
+            className="w-52 ml-auto mr-auto"
+            onClick={() =>
+              generateCSV<Contract>("contracts.csv", () => downloadContracts())
+            }
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <Loader></Loader>
+            ) : (
+              <span>Download Contracts</span>
+            )}
+          </Button>
+          <Button
+            className="w-52 ml-auto mr-auto"
+            onClick={() =>
+              generateCSV<Lease>("leases.csv", () => downloadLeases())
+            }
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader></Loader> : <span>Download Leases</span>}
+          </Button>
+        </div>
+        {downloadError ? (
+          <p className="font-bold text-red-500 mb-8">{downloadError}</p>
+        ) : null}
+        {pagesToDownload !== 0 ? (
+          <Progress value={(100 / pagesToDownload) * pagesDownloaded} />
+        ) : null}
+      </main>
+      <footer className="flex bg-black justify-center p-4 gap-8 mt-auto">
         <a
-          className="text-blue-400"
-          href="https://api.doge.gov/docs"
+          className="text-white"
+          href="https://www.linkedin.com/in/severin-bucher-21a321276/"
           target="_blank"
         >
-          API
+          <Linkedin size={40} />
         </a>
-        .
-      </p>
-      <div className="flex flex-col gap-4 justify-center mb-8">
-        <Button
-          className="w-52 ml-auto mr-auto"
-          onClick={generateGrantCSV}
-          disabled={isDownloading}
+        <a
+          className="text-white"
+          href="https://github.com/richi0/DogeDownloadTool"
+          target="_blank"
         >
-          {isDownloading ? <Loader></Loader> : <span>Download Grants</span>}
-        </Button>
-        <Button
-          className="w-52 ml-auto mr-auto"
-          onClick={generateContractsCSV}
-          disabled={isDownloading}
-        >
-          {isDownloading ? <Loader></Loader> : <span>Download Contracts</span>}
-        </Button>
-        <Button
-          className="w-52 ml-auto mr-auto"
-          onClick={generateLeasesCSV}
-          disabled={isDownloading}
-        >
-          {isDownloading ? <Loader></Loader> : <span>Download Leases</span>}
-        </Button>
-      </div>
-      {downloadError ? (
-        <p className="font-bold text-red-500 mb-8">{downloadError}</p>
-      ) : null}
-      {pagesToDownload !== 0 ? (
-        <Progress value={(100 / pagesToDownload) * pagesDownloaded} />
-      ) : null}
-    </main>
+          <Github size={40} />
+        </a>
+      </footer>
+    </div>
   );
 };
 

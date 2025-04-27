@@ -1,54 +1,33 @@
-# React + TypeScript + Vite
+# DOGE API Download Tool
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The [**DOGE API Download Tool**](https://dogedownloadtool.pages.dev/) is a React-based web application that allows users to fetch data from the [Department of Government Efficiency's (DOGE)](https://doge.gov/) official API and download it as CSV files. This tool is designed to make it easy to retrieve and work with government data in spreadsheet programs.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Fetch data from the DOGE API endpoints:
+  - Grants
+  - Contracts
+  - Leases
+- Download the data as CSV files.
+- Real-time progress tracking for multi-page downloads.
+- Error handling and user-friendly feedback.
+- Responsive and accessible UI built with Tailwind CSS.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React**: Frontend framework for building the user interface.
+- **TypeScript**: Strongly typed JavaScript for better code quality.
+- **Vite**: Fast development server and build tool.
+- **Tailwind CSS**: Utility-first CSS framework for styling.
+- **Radix UI**: Accessible UI primitives for components like progress bars.
+- **CSV Stringify**: Library for converting data to CSV format.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Installation
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/richi0/DogeDownloadTool.git
+   cd DogeDownloadTool
+   bun install
+   bun dev
+   ```
