@@ -12,7 +12,7 @@ import {
   SimpleError,
 } from "./lib/download";
 import { Github, Linkedin, Loader } from "lucide-react";
-import { Contract, Grant, Lease } from "./lib/typing";
+import { Contract, Grant, Lease, Payment } from "./lib/typing";
 
 const App = () => {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -129,7 +129,7 @@ const App = () => {
           <Button
             className="w-52 ml-auto mr-auto"
             onClick={() =>
-              generateCSV<Lease>("payments.csv", () => downloadPayments())
+              generateCSV<Payment>("payments.csv", () => downloadPayments())
             }
             disabled={isDownloading}
           >
