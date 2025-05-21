@@ -1,4 +1,4 @@
-export interface ListResponseGrant {
+export interface ListResponse {
   success: boolean;
   result: Result;
   meta: Meta;
@@ -8,6 +8,7 @@ export interface Result {
   grants: Grant[];
   contracts: Contract[];
   leases: Lease[];
+  payments: Payment[];
 }
 
 export interface Grant {
@@ -40,6 +41,18 @@ export interface Lease {
   value: number;
   savings: number;
   agency: string;
+}
+
+export interface Payment {
+  payment_date: string;
+  payment_amt: number;
+  agency_name: string;
+  award_description: string;
+  fain: any;
+  recipient_justification: string;
+  agency_lead_justification: string;
+  org_name: string;
+  generated_unique_award_id: any;
 }
 
 export interface Meta {

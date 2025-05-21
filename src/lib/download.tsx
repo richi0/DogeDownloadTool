@@ -1,4 +1,4 @@
-import { Contract, Grant, Lease, ListResponseGrant } from "./typing";
+import { Contract, Grant, Lease, ListResponse, Payment } from "./typing";
 
 export type SimpleError = {
   message: string;
@@ -11,7 +11,7 @@ export type PagesPayload = {
 
 export async function downloadAllPagesGrants<T>(
   url: string,
-  resultField: "grants" | "contracts" | "leases"
+  resultField: "grants" | "contracts" | "leases" | "payments",
 ): Promise<T[] | SimpleError> {
   const result: T[] = [];
   try {
@@ -22,7 +22,7 @@ export async function downloadAllPagesGrants<T>(
         status: firstPageResponse.status,
       };
     }
-    const firstPageData = (await firstPageResponse.json()) as ListResponseGrant;
+    const firstPageData = (await firstPageResponse.json()) as ListResponse;
     const pages = firstPageData.meta.pages;
     const pagesEvent = new CustomEvent<PagesPayload>("totalPages", {
       detail: { value: pages },
@@ -35,7 +35,7 @@ export async function downloadAllPagesGrants<T>(
     let pageCount = 2;
     while (pageCount <= pages) {
       const pageResponse = await fetch(url + `?page=${pageCount}&per_page=500`);
-      const pageData = (await pageResponse.json()) as ListResponseGrant;
+      const pageData = (await pageResponse.json()) as ListResponse;
       result.push(...(pageData.result[resultField] as T[]));
       const pagesEvent = new CustomEvent<PagesPayload>("downloadedPages", {
         detail: { value: pageCount },
@@ -64,5 +64,11 @@ export async function downloadContracts() {
 export async function downloadLeases() {
   const url = "https://api.doge.gov/savings/leases";
   const result = await downloadAllPagesGrants<Lease>(url, "leases");
+  return result;
+}
+
+export async function downloadPayments() {
+  const url = "https://api.doge.gov/payments";
+  const result = await downloadAllPagesGrants<Payment>(url, "payments");
   return result;
 }

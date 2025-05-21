@@ -7,6 +7,7 @@ import {
   downloadContracts,
   downloadGrants,
   downloadLeases,
+  downloadPayments,
   PagesPayload,
   SimpleError,
 } from "./lib/download";
@@ -26,7 +27,7 @@ const App = () => {
         const customEvent = e as CustomEvent<PagesPayload>;
         setPagesToDownload(customEvent.detail.value);
       },
-      false
+      false,
     );
     document.addEventListener(
       "downloadedPages",
@@ -34,13 +35,13 @@ const App = () => {
         const customEvent = e as CustomEvent<PagesPayload>;
         setPagesDownloaded(customEvent.detail.value);
       },
-      false
+      false,
     );
   }, []);
 
   async function generateCSV<T>(
     filename: string,
-    downloadFN: () => Promise<SimpleError | T[]>
+    downloadFN: () => Promise<SimpleError | T[]>,
   ) {
     if (isDownloading) {
       return;
@@ -124,6 +125,15 @@ const App = () => {
             disabled={isDownloading}
           >
             {isDownloading ? <Loader></Loader> : <span>Download Leases</span>}
+          </Button>
+          <Button
+            className="w-52 ml-auto mr-auto"
+            onClick={() =>
+              generateCSV<Lease>("payments.csv", () => downloadPayments())
+            }
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader></Loader> : <span>Download Payments</span>}
           </Button>
         </div>
         {downloadError ? (
