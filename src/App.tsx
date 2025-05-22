@@ -75,7 +75,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-dvh">
       <main className="m-8 text-center">
         <h1 className="text-4xl mb-8">DOGE API Download Tool</h1>
         <p className="mb-8 max-w-md mx-auto">
